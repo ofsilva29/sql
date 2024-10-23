@@ -1,0 +1,145 @@
+using System;
+using System.Collections.Generic;
+
+namespace Bergs.ProvacSharp
+{
+    public class Conta
+    {
+        public decimal Saldo { get; private set; }
+        private List<ChaveFavorita> chavesFavoritas = new List<ChaveFavorita>();
+        private string caminhoBancoDados;
+
+        public Conta(string caminhoBancoDados)
+        {
+            this.caminhoBancoDados = caminhoBancoDados;
+            this.Saldo = 0;
+        }
+
+        public Retorno CreditarConta()
+        {
+            Console.Write("Informe o valor a ser creditado: ");
+            string valorInput = Console.ReadLine();
+            if (!decimal.TryParse(valorInput, out decimal valor) || valor <= 0)
+            {
+                return new Retorno(false, 10, "Valor inválido.");
+            }
+            this.Saldo += valor;
+            return new Retorno(true, 0, "Valor creditado com sucesso.");
+        }
+
+        public Retorno AdicionarChaveFavorita()
+        {
+            Console.Write("Informe o nome do titular: ");
+            string nome = Console.ReadLine();
+            Console.Write("Informe o tipo de chave [1-Telefone, 2-CPF]: ");
+            string tipoChaveInput = Console.ReadLine();
+            Console.Write("Informe a chave: ");
+            string chave = Console.ReadLine();
+
+            if (!Enum.TryParse(tipoChaveInput, out TiposChave tipoChave))
+            {
+                return new Retorno(false, 30, "Tipo de chave inválido.");
+            }
+
+            try
+            {
+                ValidaChave(chave, tipoChave);
+                if (chavesFavoritas.Exists(c => c.Chave == chave))
+                {
+                    throw new ChaveDuplicadaException("Chave duplicada.");
+                }
+
+                chavesFavoritas.Add(new ChaveFavorita(nome, chave, tipoChave));
+                return new Retorno(true, 0, "Chave adicionada com sucesso.");
+            }
+            catch (Exception ex)
+            {
+                return new Retorno(false, 65, ex.Message);
+            }
+        }
+
+        private void ValidaChave(string chave, TiposChave tipoChave)
+        {
+            string regex;
+            if (tipoChave == TiposChave.CPF)
+            {
+                regex = "^\\d{11}$";
+                if (!System.Text.RegularExpressions.Regex.IsMatch(chave, regex))
+                {
+                    throw new ChaveInvalidaException("CPF inválido.");
+                }
+            }
+            else if (tipoChave == TiposChave.Telefone)
+            {
+                regex = "^\\+[1-9][0-9]\\d{11}$";
+                if (!System.Text.RegularExpressions.Regex.IsMatch(chave, regex))
+                {
+                    throw new ChaveInvalidaException("Telefone inválido.");
+                }
+            }
+        }
+
+        public void ListarChavesFavoritas()
+        {
+            Console.WriteLine("Lista de chaves favoritas:");
+            foreach (var chave in chavesFavoritas)
+            {
+                Console.WriteLine($"Chave: {chave.Chave}, Titular: {chave.NomeTitular}, " +
+                                  $"Quantidade: {chave.Quantidade}, Total PIX: {chave.ValorTotalPix:C}");
+            }
+        }
+
+        public Retorno EnviarPix()
+        {
+            Console.Write("Informe a chave: ");
+            string chave = Console.ReadLine();
+            Console.Write("Informe o valor do PIX: ");
+            string valorInput = Console.ReadLine();
+
+            if (!decimal.TryParse(valorInput, out decimal valor) || valor <= 0)
+            {
+                return new Retorno(false, 10, "Valor inválido.");
+            }
+
+            var chaveFavorita = chavesFavoritas.Find(c => c.Chave == chave);
+            if (chaveFavorita == null)
+            {
+                return new Retorno(false, 60, "Chave inexistente.");
+            }
+
+            if (this.Saldo < valor)
+            {
+                return new Retorno(false, 70, "Saldo insuficiente.");
+            }
+
+            chaveFavorita.Quantidade++;
+            chaveFavorita.ValorTotalPix += valor;
+            this.Saldo -= valor;
+
+            return new Retorno(true, 0, "PIX enviado com sucesso.");
+        }
+
+        public Retorno Persistir()
+        {
+            using (var banco = new AcessoBancoDados(this.caminhoBancoDados))
+            {
+                try
+                {
+                    banco.Abrir();
+                    banco.ExecutarDelete("DELETE FROM ChavesFavoritas");
+                    foreach (var chave in chavesFavoritas)
+                    {
+                        banco.ExecutarInsert($"INSERT INTO ChavesFavoritas (NomeTitular, Chave, TipoChave) " +
+                                             $"VALUES ('{chave.NomeTitular}', '{chave.Chave}', '{(int)chave.TipoChave}')");
+                    }
+                    banco.EfetivarComandos();
+                    return new Retorno(true, 0, "Chaves persistidas com sucesso.");
+                }
+                catch (Exception ex)
+                {
+                    return new Retorno(false, 990, ex.Message);
+                }
+            }
+        }
+    }
+}

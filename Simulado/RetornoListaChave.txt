@@ -1,0 +1,14 @@
+namespace Bergs.ProvacSharp
+{
+    public class RetornoListaChave
+    {
+        public bool Sucesso { get; }
+        public List<ChaveFavorita> Chaves { get; }
+
+        public RetornoListaChave(bool sucesso, List<ChaveFavorita> chaves)
+        {
+            this.Sucesso = sucesso;
+            this.Chaves = chaves;
+        }
+    }
+}

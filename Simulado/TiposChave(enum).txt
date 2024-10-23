@@ -1,0 +1,8 @@
+namespace Bergs.ProvacSharp
+{
+    public enum TiposChave
+    {
+        Telefone = 1,
+        CPF = 2
+    }
+}

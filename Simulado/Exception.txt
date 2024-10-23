@@ -1,0 +1,45 @@
+namespace Bergs.ProvacSharp
+{
+    public class TipoRegistroInvalidoException : Exception
+    {
+        public TipoRegistroInvalidoException(string message) : base(message) { }
+        public TipoRegistroInvalidoException(string message, Exception innerException) : base(message, innerException) { }
+    }
+
+    public class RegistroSemExtratoException : Exception
+    {
+        public RegistroSemExtratoException(string message) : base(message) { }
+        public RegistroSemExtratoException(string message, Exception innerException) : base(message, innerException) { }
+    }
+
+     public class TransacaoNaoPermitidaException : Exception
+    {
+        public TransacaoNaoPermitidaException(string message) : base(message) { }
+        public TransacaoNaoPermitidaException(string message, Exception innerException) : base(message, innerException) { }
+    }
+
+    public class ValorRegistroInvalidoException : Exception
+    {
+        public ValorRegistroInvalidoException(string message) : base(message) { }
+        public ValorRegistroInvalidoException(string message, Exception innerException) : base(message, innerException) { }
+    }
+
+    public class TiposIncompativeisException : Exception
+    {
+        public TiposIncompativeisException(string message) : base(message) { }
+        public TiposIncompativeisException(string message, Exception innerException) : base(message, innerException) { }
+    }
+
+    public class ChaveInvalidaException : Exception
+    {
+        public ChaveInvalidaException(string message) : base(message) { }
+        public ChaveInvalidaException(string message, Exception innerException) : base(message, innerException) { }
+    }
+
+    public class ChaveDuplicadaException : Exception
+    {
+        public ChaveDuplicadaException(string message) : base(message) { }
+        public ChaveDuplicadaException(string message, Exception innerException) : base(message, innerException) { }
+    }
+}
+

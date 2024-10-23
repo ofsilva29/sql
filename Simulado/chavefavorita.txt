@@ -1,0 +1,20 @@
+namespace Bergs.ProvacSharp
+{
+    public class ChaveFavorita
+    {
+        public string NomeTitular { get; }
+        public string Chave { get; }
+        public TiposChave TipoChave { get; }
+        public int Quantidade { get; set; }
+        public decimal ValorTotalPix { get; set; }
+
+        public ChaveFavorita(string nomeTitular, string chave, TiposChave tipoChave)
+        {
+            this.NomeTitular = nomeTitular;
+            this.Chave = chave;
+            this.TipoChave = tipoChave;
+            this.Quantidade = 0;
+            this.ValorTotalPix = 0;
+        }
+    }
+}

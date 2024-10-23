@@ -1,0 +1,58 @@
+using System;
+
+namespace Bergs.ProvacSharp
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            Conta conta = new Conta("C:/Users/ofsil/Downloads/Simulado/Simulado/Banco de dados/AcessaBancoDados.dll");
+            int opcao;
+            do
+            {
+                Console.Clear();
+                Console.WriteLine($"== Saldo atual: {conta.Saldo:C} ==");
+                Console.WriteLine("1. Efetuar crédito em conta");
+                Console.WriteLine("2. Adicionar chave favorita");
+                Console.WriteLine("3. Listar chaves favoritas");
+                Console.WriteLine("4. Enviar PIX");
+                Console.WriteLine("5. Persistir chaves");
+                Console.WriteLine("6. Sair");
+                Console.Write("Informe a opção desejada: ");
+                opcao = int.Parse(Console.ReadLine());
+
+                try
+                {
+                    switch (opcao)
+                    {
+                        case 1:
+                            conta.CreditarConta();
+                            break;
+                        case 2:
+                            conta.AdicionarChaveFavorita();
+                            break;
+                        case 3:
+                            conta.ListarChavesFavoritas();
+                            break;
+                        case 4:
+                            conta.EnviarPix();
+                            break;
+                        case 5:
+                            conta.Persistir();
+                            break;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Erro: {ex.Message}");
+                }
+
+                if (opcao != 6)
+                {
+                    Console.WriteLine("Pressione qualquer tecla para continuar...");
+                    Console.ReadKey();
+                }
+            } while (opcao != 6);
+        }
+    }
+}

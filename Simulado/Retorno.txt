@@ -1,0 +1,16 @@
+namespace Bergs.ProvacSharp
+{
+    public class Retorno
+    {
+        public bool Sucesso { get; }
+        public int CodRetorno { get; }
+        public string Mensagem { get; }
+
+        public Retorno(bool sucesso, int codRetorno, string mensagem)
+        {
+            this.Sucesso = sucesso;
+            this.CodRetorno = codRetorno;
+            this.Mensagem = mensagem;
+        }
+    }
+}
